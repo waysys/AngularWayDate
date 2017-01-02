@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Date Bench Tests</title>
+    <link rel="stylesheet" href="qunit-1.14.0.css">
+    <script src="qunit-1.14.0.js"></script>
+    <script src="../model/WayDate.js"></script>
+    <script src="../model/Holiday.js"></script>
+    <script>
+        /* globals throws */
+        test("WayDate tests", function () {
+            var date = new WayDate(1, 1, 2014);
+            var date2 = new WayDate(1, 1, 2014);
+            var date3 = new WayDate(2, 29, 2000);
+            var date4 = new WayDate(12, 31, 2000);
+            equal(date.year, 2014);
+            equal(date.month, 1);
+            equal(date.day, 1);
+            ok(date.equals(date2));
+            ok(!WayDate.isLeapYear(1900));
+            ok(WayDate.isLeapYear(1904));
+            ok(!date.leapYear());
+            equal(WayDate.daysInMonth(2, 2000), 29);
+            equal(WayDate.daysInMonth(2, 1900), 28);
+            equal(WayDate.daysInMonth(3, 1801), 31);
+            equal(date.monthAbbrev(1), 'Jan'); //10
+            equal(date.monthAbbrev(12), 'Dec');
+            equal(date.toString(), "01-Jan-2014");
+            equal(WayDate.daysInPastYears(1601), 365);
+            equal(WayDate.daysInPastYears(1600), 0);
+            equal(WayDate.daysInPastYears(WayDate.MAXIMUM_YEAR), 876216);
+            equal(WayDate.daysInYear(2000), 366);
+            equal(WayDate.daysInYear(1900), 365);
+            equal(date.dayYear(), 1);
+            equal(date4.dayYear(), 366);
+            var monthDay = WayDate.monthDayFromDayOfYear(date3.dayYear(), date3.year);
+            equal(monthDay[0], date3.month);
+            equal(monthDay[1], date3.day);
+        });
+        test("failure test", function () {
+                throws(function () {
+                    new WayDate(2, 29, 1900);
+                }, Error)
+            }
+        );
+        test("absolute date test", function () {
+                var minDate = new WayDate(1, 1, 1601);
+                var maxDate = new WayDate(12, 31, WayDate.MAXIMUM_YEAR);
+                var date3 = new WayDate(2, 29, 2000);
+                var abDate = date3.valueOf();
+                equal(WayDate.yearFromAbsolute(abDate), date3.year);
+                var date4 = WayDate.dateFromAbsolute(abDate);
+                ok(date3.equals(date4));
+                equal(minDate.valueOf(), 1);
+                equal(maxDate.valueOf(), WayDate.MAXIMUM_ABSOLUTE_DATE);
+            }
+        );
+        test("day of year test", function () {
+                var date = new WayDate(3, 1, 2014);
+                var dayOfYear = date.dayYear();
+                var date1 = WayDate.dateFromDayOfMonth(dayOfYear, date.year);
+                ok(date.equals(date1));
+            }
+        );
+        test("today", function () {
+                var date = WayDate.today();
+                equal(date.day, 31);
+                equal(date.month, 12);
+                equal(date.year, 2016);
+            }
+        );
+        test("day of week", function () {
+                var date = new WayDate(2, 15, 2014);
+                var mindate = new WayDate(1, 1, 1601);
+                equal(date.dayOfWeek(), "Sat");
+                equal(mindate.dayOfWeek(), "Mon");
+            }
+        );
+        test("test of addition", function () {
+                var date1 = new WayDate(2, 19, 2000);
+                var date2 = new WayDate(2, 29, 2000);
+                ok(date1.add(10).equals(date2));
+                ok(date2.add(-10).equals(date1));
+            }
+        );
+        test("test of difference", function () {
+                var date1 = new WayDate(2, 19, 2000);
+                var date2 = new WayDate(2, 29, 2000);
+                equal(date2.difference(date1), 10);
+                equal(date1.difference(date2), -10);
+            }
+        );
+        test("test of compare", function () {
+                var dateLess = new WayDate(1, 1, 2016);
+                var dateEqual1 = new WayDate(2, 1, 2016);
+                var dateEqual2 = new WayDate(2, 1, 2016);
+                var dateGreater = new WayDate(3, 1, 2016);
+                ok(dateLess < dateEqual1);
+                ok(!(dateLess < dateLess));
+                ok(dateGreater > dateEqual1);
+                ok(!(dateEqual1 > dateGreater));
+                ok(dateEqual1.equals(dateEqual2));
+                ok(dateEqual1.equals(dateEqual1));
+                ok(!dateEqual1.equals(dateLess));
+            }
+        );
+        test("Test of New Years", function () {
+                var holiday = new Holiday();
+                var newYearsDay = holiday.newYearsDay(2014);
+                equal(newYearsDay.day, 1);
+                equal(newYearsDay.month, 1);
+                equal(newYearsDay.year, 2014);
+            }
+        );
+
+        test("Test of offset", function () {
+                var holiday = new Holiday();
+                equal(holiday.calculateOffset(Holiday.Position.FIRST), 7);
+                equal(holiday.calculateOffset(Holiday.Position.SECOND), 14);
+                equal(holiday.calculateOffset(Holiday.Position.THIRD), 21);
+                equal(holiday.calculateOffset(Holiday.Position.FOURTH), 28);
+                equal(holiday.calculateOffset(Holiday.Position.LAST), -7);
+            }
+        );
+
+        test("Test of dateOnDayOfWeekOnOrBefore", function () {
+                var holiday = new Holiday();
+                var inputDate = new WayDate(5, 25, 2014);
+                var date = holiday.dateOnDayOfWeekOnOrBefore(inputDate, 1);
+                equal(date.dayOfWeekNumber(), 1);
+            }
+        );
+
+        test("Test of Martin Luther King's Birthday", function () {
+                var holiday = new Holiday();
+                var date = holiday.martinLutherKingsBirthday(2014);
+                equal(date.day, 20);
+                equal(date.month, 1);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Washington's Birthday", function () {
+                var holiday = new Holiday();
+                var date = holiday.washingtonsBirthday(2014);
+                equal(date.day, 17);
+                equal(date.month, 2);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Memorial Day", function () {
+                var holiday = new Holiday();
+                var date = holiday.memorialDay(2014);
+                equal(date.day, 26);
+                equal(date.month, 5);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Independence Day", function () {
+                var holiday = new Holiday();
+                var date = holiday.independenceDay(2014);
+                equal(date.day, 4);
+                equal(date.month, 7);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Labor Day", function () {
+                var holiday = new Holiday();
+                var date = holiday.laborDay(2014);
+                equal(date.day, 1);
+                equal(date.month, 9);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Columbus Day", function () {
+                var holiday = new Holiday();
+                var date = holiday.columbusDay(2014);
+                equal(date.day, 13);
+                equal(date.month, 10);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Veterans Day", function () {
+                var holiday = new Holiday();
+                var date = holiday.veteransDay(2014);
+                equal(date.day, 11);
+                equal(date.month, 11);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Thanksgiving", function () {
+                var holiday = new Holiday();
+                var date = holiday.thanksgiving(2014);
+                equal(date.day, 27);
+                equal(date.month, 11);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Christmas Day", function () {
+                var holiday = new Holiday();
+                var date = holiday.christmas(2014);
+                equal(date.day, 25);
+                equal(date.month, 12);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Easter", function () {
+                var holiday = new Holiday();
+                var date = holiday.easter(2014);
+                equal(date.day, 20);
+                equal(date.month, 4);
+                equal(date.year, 2014);
+            }
+        );
+
+        test("Test of Easter error", function () {
+                // This test checks an error discovered on 29-Dec-2016 in the original code.
+                var holiday = new Holiday();
+                var easter = holiday.easter(2100);
+                equal(easter.day, 28);
+                equal(easter.month, 3);
+                equal(easter.year, 2100);
+        });
+
+        test("Test of names", function () {
+              var holiday = new Holiday();
+              equal(holiday.getName(0), "New Year's Day");
+              equal(holiday.getName(10), "Christmas");
+           }
+        );
+    </script>
+</head>
+<body>
+<div id="qunit"></div>
+</body>
+</html>

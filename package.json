@@ -1,0 +1,21 @@
+{
+  "name": "angularwaydate",
+  "version": "1.0.0",
+  "description": "DateBench implemented as an AngularJS app.",
+  "main": "Calendar.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "William Shaffer",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^3.12.2",
+    "eslint-config-google": "^0.7.1"
+  },
+  "globals": {
+    "angular": 1
+  }
+}
