@@ -24,7 +24,10 @@
 
   "globals": {
     "WayDate": true,
-    "Calendar" : true
+    "Calendar" : true,
+    "module" : false,
+    "test" : false,
+    "QUnit": false
   }
 
 }

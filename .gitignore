@@ -1,0 +1,4 @@
+node_modules/
+bowers_components/
+.idea/
+dist/
