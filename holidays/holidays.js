@@ -29,7 +29,7 @@ function HolidayCntrl($scope) {
     $scope.populateTable = function (year) {
         var holiday = new Holiday();
         var index;
-        for (index = 1; index < 11; index++) {
+        for (index = 0; index < 11; index++) {
             $scope.holidays[index] = {
                 name : holiday.getName(index),
                 date : holiday.holidays(index, year).toString(),
