@@ -91,7 +91,7 @@ WayDate.prototype = {
      * Return the abbreviation of the day of the week.
      *
      * @param {number} day the day of the week - Sunday = 0
-     * @return {String} the day of the week
+     * @returns {String} the day of the week
      */
     dayOfWeekAbbrev: function (day) {
         "use strict";

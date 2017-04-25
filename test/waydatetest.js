@@ -61,8 +61,8 @@ QUnit.test("day of year test", function (assert) {
 );
 QUnit.test("today", function (assert) {
     var date = WayDate.today();
-    assert.equal(date.day, 11);
-    assert.equal(date.month, 2);
+    assert.equal(date.day, 24);
+    assert.equal(date.month, 4);
     assert.equal(date.year, 2017);
 }
 );
